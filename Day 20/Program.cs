@@ -37,7 +37,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
                     
-                    if (Data[0, charCount] == '#')
+                    if (RawData[0, charCount] == '#')
                     {
                         top |= ornum;
                     }
@@ -55,7 +55,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
                     
-                    if (Data[charCount, 9] == '#')
+                    if (RawData[charCount, 9] == '#')
                     {
                         right |= ornum;
                     }
@@ -74,7 +74,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
                     
-                    if (Data[9, charCount] == '#')
+                    if (RawData[9, charCount] == '#')
                     {
                         bottom |= ornum;
                     }
@@ -93,7 +93,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
                    
-                    if (Data[charCount, 0] == '#')
+                    if (RawData[charCount, 0] == '#')
                     {
                         left |= ornum;
                     }
@@ -112,7 +112,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
 
-                    if (Data[0, charCount] == '#')
+                    if (RawData[0, charCount] == '#')
                     {
                         top |= ornum;
                     }
@@ -130,7 +130,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
 
-                    if (Data[charCount, 9] == '#')
+                    if (RawData[charCount, 9] == '#')
                     {
                         right |= ornum;
                     }
@@ -149,7 +149,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
 
-                    if (Data[9, charCount] == '#')
+                    if (RawData[9, charCount] == '#')
                     {
                         bottom |= ornum;
                     }
@@ -168,7 +168,7 @@ namespace Day_20
                 for (int charCount = 0; charCount < 10; charCount++)
                 {
 
-                    if (Data[charCount, 0] == '#')
+                    if (RawData[charCount, 0] == '#')
                     {
                         left |= ornum;
                     }
@@ -286,7 +286,9 @@ namespace Day_20
                 return RawTop;
             }
         }
-        public char[,] Data { get => data; set => data = value; }
+
+       
+        public char[,] RawData { get => data; set => data = value; }
         public int Id { get => id; set => id = value; }
         public int JoinCount { get => joinCount; set => joinCount = value; }
         public TileState State { get => state; set => state = value; }
@@ -407,6 +409,71 @@ namespace Day_20
                 JoinCount++;
             }
         }
+
+        internal char GetData(int row, int col)
+        {
+            int temp;
+            switch (State)
+            {
+                case TileState.TopisTop:
+                    break;
+                case TileState.RightisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - 4) * 2) - 1; 
+                        col = temp;
+                    }
+                    break;
+                case TileState.BottomisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - 4) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.LeftisTop:
+                    for (int i = 0; i < 1; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - 4) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.TopFlipisTop:
+                    col = col - ((col - 4) * 2);
+                    break;
+                case TileState.RightFlipisTop:
+                    temp = row;
+                    for (int i = 0; i < 1; i++)
+                    {
+                        row = col - ((col - 4) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - 4) * 2) - 1;
+                    break;
+                case TileState.BottomFlipisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - 4) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - 4) * 2) - 1;
+                    break;
+                case TileState.LeftFlipisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - 4) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - 4) * 2) - 1;
+                    break;
+            }
+            return RawData[row + 1, col + 1];
+        }
     }
 
 
@@ -422,7 +489,7 @@ namespace Day_20
             Tile currentTile = null;
             foreach (string line in TileData)
             {
-                if(line == "")
+                if (line == "")
                 {
                     Tiles.Add(currentTile);
                     AddJoin(joins, currentTile, currentTile.RawTop);
@@ -434,11 +501,11 @@ namespace Day_20
                     AddJoin(joins, currentTile, currentTile.RawRightFlip);
                     AddJoin(joins, currentTile, currentTile.RawLeftFlip);
                 }
-                else if(line.Substring(0, 4) == "Tile")
+                else if (line.Substring(0, 4) == "Tile")
                 {
                     currentTile = new Tile();
                     currentTile.Id = Convert.ToInt32(line.Substring(5, 4));
-                    
+
                 }
                 else
                 {
@@ -463,6 +530,7 @@ namespace Day_20
             image = new Tile[imageDim, imageDim];
             List<Tile> usedTiles;
             bool foundSolution = false;
+            int row = 0, col = 0;
             foreach (Tile tile in Tiles)
             {
                 if (!foundSolution)
@@ -477,7 +545,7 @@ namespace Day_20
                         int tilePosID = 1;
                         while (thisWorks && tilePosID < Tiles.Count)
                         {
-                            int col, row;
+                            //int col, row;
                             row = Math.DivRem(tilePosID, imageDim, out col);
                             if (row > 0)
                             {
@@ -546,7 +614,7 @@ namespace Day_20
                                 }
                             }
                             tilePosID++;
-                            
+
                         }
                         if (thisWorks)
                         {
@@ -559,7 +627,215 @@ namespace Day_20
             }
             UInt64 IDCheck = (UInt64)image[0, 0].Id * (UInt64)image[imageDim - 1, 0].Id * (UInt64)image[0, imageDim - 1].Id * (UInt64)image[imageDim - 1, imageDim - 1].Id;
             Console.WriteLine(IDCheck);
+
+            char[,] seaImage = new char[8 * imageDim, 8 * imageDim];
+
+            for (int imgRow = 0; imgRow < imageDim; imgRow++)
+            {
+                for (int imgCol = 0; imgCol < imageDim; imgCol++)
+                {
+                    row = imgRow * 8;
+                    col = imgCol * 8;
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++)
+                        {
+                            seaImage[row + r, col + c] = image[imgRow, imgCol].GetData(r, c);
+                        }
+                    }
+                }
+            }
+
+           // PrintMap(seaImage, TileState.TopisTop);
+            int monsterCount = 0;
+            for (int checkState = 0; checkState < 8; checkState++)
+            {
+                PrintMap(seaImage, (TileState)checkState);
+                Console.WriteLine();
+                for (int rowCount = 1; rowCount < 8 * imageDim - 2; rowCount++)
+                {
+                    for (int colCount = 0; colCount < 8 * imageDim - 20; colCount++)
+                    {
+                        if (seaImage[getRow(rowCount, colCount, (TileState)checkState, 4 * imageDim), getCol(rowCount, colCount, (TileState)checkState, 4 * imageDim)] == '#')
+                        {
+                            int[] rowchange = { 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, -1, 0, 0 };
+                            int[] colchange = { 1, 4, 5, 6, 7, 10, 11, 12, 13, 16, 17, 18, 18, 19 };
+                            bool foundOne = true;
+                            for (int tailCheck = 0; tailCheck < 14; tailCheck++)
+                            {
+                                if (seaImage[getRow(rowCount + rowchange[tailCheck], colCount + colchange[tailCheck], (TileState)checkState, 4 * imageDim), getCol(rowCount + rowchange[tailCheck], colCount + colchange[tailCheck], (TileState)checkState, 4 * imageDim)] != '#')
+                                {
+                                    tailCheck = 14;
+                                    foundOne = false;
+                                }
+
+                            }
+                            if (foundOne)
+                            {
+                                monsterCount++;
+                            }
+                        }
+
+                    }
+                }
+            }
+            int hashCount = 0;
+            for (int rowCount = 0; rowCount < 8 * imageDim; rowCount++)
+            {
+                for (int colCount = 0; colCount < 8 * imageDim; colCount++)
+                {
+                    if(seaImage[rowCount, colCount] == '#')
+                    {
+                        hashCount++;
+                    }
+                }
+            }
+            Console.WriteLine((hashCount - 15 * monsterCount));
             Console.ReadLine();
+        }
+
+        private static void PrintMap( char[,] seaImage, TileState state)
+        {
+            int dim = seaImage.GetLength(0);
+            for (int r = 0; r < dim; r++)
+            {
+                string line = "";
+                for (int c = 0; c < dim; c++)
+                {
+                    line += seaImage[getRow(r, c, state, dim/2), getCol(r, c, state, dim/2)];
+                }
+                Console.WriteLine(line);
+            }
+        }
+
+        private static int getCol(int row, int col, TileState checkState, int dim)
+        {
+            int temp;
+            switch (checkState)
+            {
+                case TileState.TopisTop:
+                    break;
+                case TileState.RightisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.BottomisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.LeftisTop:
+                    for (int i = 0; i < 1; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.TopFlipisTop:
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.RightFlipisTop:
+                    temp = row;
+                    for (int i = 0; i < 1; i++)
+                    {
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.BottomFlipisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.LeftFlipisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+            }
+            return col;
+        }
+
+        private static int getRow(int row, int col, TileState checkState, int dim)
+        {
+            int temp;
+            switch (checkState)
+            {
+                case TileState.TopisTop:
+                    break;
+                case TileState.RightisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.BottomisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.LeftisTop:
+                    for (int i = 0; i < 1; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    break;
+                case TileState.TopFlipisTop:
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.RightFlipisTop:
+                    temp = row;
+                    for (int i = 0; i < 1; i++)
+                    {
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.BottomFlipisTop:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+                case TileState.LeftFlipisTop:
+                    for (int i = 0; i < 3; i++)
+                    {
+                        temp = row;
+                        row = col - ((col - dim) * 2) - 1;
+                        col = temp;
+                    }
+                    col = col - ((col - dim) * 2) - 1;
+                    break;
+            }
+            return row;
         }
 
         private static void AddJoin(Dictionary<int, List<Tile>> joins, Tile currentTile, int pos)
