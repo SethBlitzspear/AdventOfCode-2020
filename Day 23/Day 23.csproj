@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FB4D0590-D10C-40FD-8F8A-E50207B7D667}</ProjectGuid>
+    <ProjectGuid>{44A8E069-E533-47EC-88F8-84BBF5A99050}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Day_22</RootNamespace>
-    <AssemblyName>Day 22</AssemblyName>
+    <RootNamespace>Day_23</RootNamespace>
+    <AssemblyName>Day 23</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -68,11 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Cards.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
